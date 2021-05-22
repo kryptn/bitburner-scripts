@@ -77,7 +77,8 @@ function Server(params) {
     this.requiredHackingLevel = params.ns.getServerRequiredHackingLevel(this.name);
     this.minimumSecurity = params.ns.getServerMinSecurityLevel(this.name);
     this.maxMoney = params.ns.getServerMaxMoney(this.name);
-    this.redeployed = false;
+    this.maxRam = params.ns.getServerMaxRam(this.name);
+    this.deployed = false;
 }
 
 
@@ -132,10 +133,11 @@ async function pwnAllServers(ns, servers, redeploy, target) {
         }
         await ns.sleep(100);
 
-        if(!server.redeployed || !ns.scriptRunning("old-hack.script", target)){
-            //ns.tprint(`redeploying ${server.name}. redeploy: ${redeploy}, old-hack running: ${ns.scriptRunning("old-hack.script", server.name)}`)
+        if(server.maxRam > 0 && (!server.deployed || !ns.scriptRunning("old-hack.script", server.name))) {
+            ns.tprint(`${server.name} targeting ${target} :: (!server.deployed ${!server.deployed} || !ns.scriptRunning("old-hack.script", server.name)) ${!ns.scriptRunning("old-hack.script", server.name)}`);
+            //ns.tprint(`redeploying ${server.name}. redeploy: ${redeploy}, old-hack running: ${ns.scriptRunning("old-hack.script", server.name)}`);
             ns.run("deploy.script", 1, server.name, target);
-            server.redeployed = true;
+            server.deployed = true;
         }
     }
 }
@@ -146,7 +148,6 @@ function ignores(server) {
         return false;
     return true;
 }
-
 
 async function hackFaction(ns, faction) {
     var serv = "";
@@ -180,16 +181,14 @@ export async function main(ns) {
     const allServers = await collectServers(ns);
     const servers = allServers.filter(ignores);
 
-    const target = ns.args[0];
-    const redeploy = ns.args[1] == "redeploy";
-
 
     if(ns.args[0] == "backdoor") {
         await hackFaction(ns, ns.args[1]);
-        return
+        return;
     }
 
-
+    const target = ns.args[0];
+    const redeploy = ns.args[1] == "redeploy";
 
 
     do {
@@ -201,13 +200,4 @@ export async function main(ns) {
 
 
     ns.tprint("everything pwned?");
-
-    //const path = await traverse(ns, "home", "CSEC", () => {ns.tprint("action ran")});
-
-    const from = ns.args[0];
-    const to = ns.args[1];
-
-    //const path = await traverse(ns, from, to, (path) => {ns.tprint("action ran, path is ", path)});
-
-
 }
