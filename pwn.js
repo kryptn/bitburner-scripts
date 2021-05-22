@@ -1,4 +1,5 @@
 // run pwn.js target-server [redeploy]
+// run pwn.js backdoor faction
 
 export async function collectServers(ns) {
     var servers = [];
@@ -122,7 +123,7 @@ Server.prototype.pwn = function(ns) {
 };
 
 
-async function pwnAllServers(ns, servers, redeploy, target) {
+async function pwnAllServers(ns, servers, target, redeploy) {
     for (const server of servers) {
 
         const canpwn = server.canPwn(ns);
@@ -134,7 +135,7 @@ async function pwnAllServers(ns, servers, redeploy, target) {
         await ns.sleep(100);
 
         if(server.maxRam > 0 && (!server.deployed || !ns.scriptRunning("old-hack.script", server.name))) {
-            ns.tprint(`${server.name} targeting ${target} :: (!server.deployed ${!server.deployed} || !ns.scriptRunning("old-hack.script", server.name)) ${!ns.scriptRunning("old-hack.script", server.name)}`);
+            ns.print(`${server.name} targeting ${target} :: (!server.deployed ${!server.deployed} || !ns.scriptRunning("old-hack.script", server.name)) ${!ns.scriptRunning("old-hack.script", server.name)}`);
             //ns.tprint(`redeploying ${server.name}. redeploy: ${redeploy}, old-hack running: ${ns.scriptRunning("old-hack.script", server.name)}`);
             ns.run("deploy.script", 1, server.name, target);
             server.deployed = true;
@@ -176,6 +177,16 @@ async function hackFaction(ns, faction) {
 
 
 
+async function propagate(ns, servers, target, redeploy) {
+    do {
+        buyAllHacks(ns);
+        await pwnAllServers(ns, servers, target, redeploy);
+
+        await ns.sleep(10000);
+    } while (!servers.every((s) => ns.hasRootAccess(s.name)));
+}
+
+
 
 export async function main(ns) {
     const allServers = await collectServers(ns);
@@ -187,17 +198,17 @@ export async function main(ns) {
         return;
     }
 
+    if(ns.args[0] == "test") {
+
+
+        return;
+    }
+
     const target = ns.args[0];
     const redeploy = ns.args[1] == "redeploy";
 
-
-    do {
-        buyAllHacks(ns);
-        await pwnAllServers(ns, servers, redeploy, target);
-
-        await ns.sleep(10000);
-    } while (!servers.every((s) => ns.hasRootAccess(s.name)));
-
+    await propagate(ns, servers, target, redeploy);
 
     ns.tprint("everything pwned?");
+
 }
