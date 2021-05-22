@@ -1,0 +1,9 @@
+// write into a port
+// run push.script action target threads
+
+var action = args[0];
+var serv = args[1];
+var threads = args[2];
+
+var value = [action, serv, threads];
+write(1, value);

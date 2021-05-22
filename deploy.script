@@ -1,0 +1,24 @@
+var runScript = "old-hack.script";
+
+
+function threadsForServ(serv, script) {
+    return Math.floor(getServerMaxRam(serv) / getScriptRam(script));
+  }
+
+function startScript(serv, script, arg) {
+    var t = threadsForServ(serv, script);
+    if(t >= 1) {
+        scp(script, serv);
+        scriptKill(script, serv);
+        exec(script, serv, t, arg);
+        var maxMoney = getServerMaxMoney(serv);
+        var growth = getServerGrowth(serv);
+        print("starting " + script + " on " + serv + " with " + t + " threads");
+        //tprint("    max money: " + maxMoney + "    growth: " + growth);
+    }
+}
+
+var hostserv = args[0];
+var target = args[1];
+
+startScript(hostserv, runScript, target);

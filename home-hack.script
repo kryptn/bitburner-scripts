@@ -1,0 +1,12 @@
+var script = "old-hack.script";
+var serv = "home";
+
+kill(script, serv);
+
+var availableRam = getServerMaxRam(serv) - getServerUsedRam(serv);
+
+// -20, save some for extra testing/running
+var threads = Math.floor(availableRam / getScriptRam(script)) - 20;
+
+tprint("starting " + script + " with " + threads + " threads.");
+exec(script, serv, threads);

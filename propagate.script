@@ -1,0 +1,149 @@
+var runScript = "old-hack.script";
+
+var servers_zero_port = [
+    "n00dles",
+    "foodnstuff",
+    "sigma-cosmetics",
+    "joesguns",
+    "hong-fang-tea",
+    "harakiri-sushi",
+    "nectar-net",
+];
+var servers_one_port = [
+    "zer0",
+    "neo-net",
+    "CSEC",
+    "max-hardware",
+    "iron-gym",
+];
+var servers_two_port = [
+    "crush-fitness",
+    "silver-helix",
+    "johnson-ortho",
+    "phantasy",
+    "omega-net",
+    "the-hub",
+    "avmnite-02h",
+
+];
+var servers_three_port = [
+    "netlink",
+    "I.I.I.I",
+    "rothman-uni",
+    "rho-construction",
+    "comptek",
+    "catalyst",
+    "summit-uni",
+    "millenium-fitness",
+
+];
+var servers_four_port = [
+    "syscore",
+    "aevum-police",
+    "lexo-corp",
+    "univ-energy",
+    "zb-def",
+    "alpha-ent",
+    "snap-fitness",
+    "nova-med",
+    "global-pharm",
+    "unitalife",
+    "run4theh111z",
+    ".",
+    "applied-energetics",
+
+];
+var servers_five_port = [
+    "zb-institute",
+    "aerocorp",
+    "omnia",
+    "icarus",
+    "zeus-med",
+    "galactic-cyber",
+    "deltaone",
+    "defcomm",
+    "infocomm",
+    "solaris",
+    "taiyang-digital",
+    "helios",
+    "omnitek",
+    "fulcrumtech",
+    "microdyne",
+    "titan-labs",
+    "solaris",
+    "defcomm",
+    "The-Cave",
+    "powerhouse-fitness",
+    "vitalife",
+    "fulcrumassets",
+    "megacorp",
+    "nwo",
+    "b-and-a",
+    "4sigma",
+    "blade",
+    "clarkinc",
+    "kuai-gong",
+    "ecorp",
+    "stormtech",
+    "w0r1d_d43m0n",
+];
+
+var securityLevel = 0;
+var requiredHacks = ["BruteSSH.exe", "FTPCrack.exe", "relaySMTP.exe", "HTTPWorm.exe", "SQLInject.exe"];
+var allServers = [servers_zero_port, servers_one_port, servers_two_port, servers_three_port, servers_four_port, servers_five_port];
+
+function threadsForServ(serv, script) {
+    return Math.floor(getServerMaxRam(serv) / getScriptRam(script));
+  }
+
+function startScript(serv, script) {
+    var t = threadsForServ(serv, script);
+    if(t >= 1) {
+        scp(script, serv);
+        kill(script, serv);
+        exec(script, serv, t);
+        var maxMoney = getServerMaxMoney(serv);
+        var growth = getServerGrowth(serv);
+        tprint("starting " + script + " on " + serv + " with " + t + " threads");
+        tprint("    max money: " + maxMoney + "    growth: " + growth);
+    }
+}
+
+function crack(serv, level) {
+    if (level >= 1)
+        brutessh(serv);
+
+    if (level >= 2)
+        ftpcrack(serv);
+
+    if (level >= 3)
+        relaysmtp(serv);
+
+    if (level >= 4)
+        httpworm(serv);
+
+    if (level >= 5)
+        sqlinject(serv);
+
+
+    nuke(serv);
+}
+
+function propagate(script, level) {
+    for (var i = 0; i < allServers[level].length; i++) {
+        var serv = allServers[level][i];
+        crack(serv, level);
+        startScript(serv, script);
+    }
+}
+
+for (var level = 0; level <= 5; level++) {
+    propagate(runScript, level);
+    //tprint("level " + level);
+
+    while(level < 5 && !fileExists(requiredHacks[level])) {
+        sleep(10000);
+    }
+    if(level < 5)
+        tprint("found " + requiredHacks[level] + "on home, advancing list");
+}

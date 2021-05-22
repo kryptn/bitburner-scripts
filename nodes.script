@@ -1,0 +1,55 @@
+function myMoney() {
+    return getServerMoneyAvailable("home");
+}
+
+disableLog("getServerMoneyAvailable");
+disableLog("sleep");
+
+var targetNodes = 14;
+var targetLevel = 120;
+var targetRam = 32;
+var targetCores = 12;
+
+while(hacknet.numNodes() < targetNodes) {
+    res = hacknet.purchaseNode();
+    print("Purchased hacknet Node with index " + res);
+}
+
+for (var i = 0; i < targetNodes; i++) {
+    while (hacknet.getNodeStats(i).level < targetLevel) {
+        var cost = hacknet.getLevelUpgradeCost(i, 10);
+        while (myMoney() < cost) {
+            print("Need $" + cost + " . Have $" + myMoney());
+            sleep(3000);
+        }
+        res = hacknet.upgradeLevel(i, 10);
+    }
+}
+
+print("All nodes upgraded to level " + targetLevel);
+
+for (var i = 0; i < targetNodes; i++) {
+    while (hacknet.getNodeStats(i).ram < targetRam) {
+        var cost = hacknet.getRamUpgradeCost(i, 2);
+        while (myMoney() < cost) {
+            print("Need $" + cost + " . Have $" + myMoney());
+            sleep(3000);
+        }
+        res = hacknet.upgradeRam(i, 2);
+    }
+}
+
+print("All nodes upgraded to " + targetRam + "GB RAM");
+
+for (var i = 0; i < targetNodes; i++) {
+    while (hacknet.getNodeStats(i).cores < targetCores) {
+        var cost = hacknet.getCoreUpgradeCost(i, 1);
+        while (myMoney() < cost) {
+            print("Need $" + cost + " . Have $" + myMoney());
+            sleep(3000);
+        }
+        res = hacknet.upgradeCore(i, 1);
+    }
+}
+
+print("All nodes upgraded to " + targetCores + " cores");

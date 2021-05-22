@@ -1,0 +1,2 @@
+var serv = args[0];
+grow(serv);

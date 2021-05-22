@@ -1,0 +1,40 @@
+function serverInfo(serv) {
+
+    var maxMoney = getServerMaxMoney(serv);
+
+    var currentMoney = getServerMoneyAvailable(serv);
+
+    var growthFactor = Math.max((maxMoney - currentMoney) / currentMoney, 1);
+
+    var myLevel = getHackingLevel();
+    var serverLevel = getServerRequiredHackingLevel(serv);
+    var canHack = myLevel >= serverLevel;
+
+    var growthTime = getGrowTime(serv) * 1000;
+    var neededThreads = growthAnalyze(serv, growthFactor);
+
+    tprint("server: " + serv + "   rooted: " + hasRootAccess(serv) + "   hackable: " + canHack);
+    tprint("          max money: " + nFormat(maxMoney, "$0.000a") + "   current money: " + nFormat(currentMoney, "$0.000a"));
+    tprint("          grow time: " + tFormat(growthTime) + "   threads needed: " + neededThreads);
+}
+
+function serverInfoTo(serv, maxMoney) {
+
+    var currentMoney = getServerMoneyAvailable(serv);
+
+    var growthFactor = Math.max((maxMoney - currentMoney) / currentMoney, 1);
+
+    var myLevel = getHackingLevel();
+    var serverLevel = getServerRequiredHackingLevel(serv);
+    var canHack = myLevel >= serverLevel;
+
+    var growthTime = getGrowTime(serv) * 1000;
+    var neededThreads = growthAnalyze(serv, growthFactor);
+
+    tprint("server: " + serv + "   rooted: " + hasRootAccess(serv) + "   hackable: " + canHack);
+    tprint("          max money: " + nFormat(maxMoney, "$0.000a") + "   current money: " + nFormat(currentMoney, "$0.000a"));
+    tprint("          grow time: " + tFormat(growthTime) + "   threads needed: " + neededThreads);
+}
+
+serv = args[0];
+serverInfo(serv);
