@@ -31,10 +31,10 @@ async function waitUntilHackingLevel(ns, level) {
 }
 
 async function deployWhenReady(ns, target) {
-    const requiredLevel = ns.getServerRequiredhackingLevel(target)
+    const requiredLevel = ns.getServerRequiredHackingLevel(target);
     await waitUntilHackingLevel(ns, requiredLevel);
 
-    await pwn(ns, target)
+    await pwn(ns, target);
 }
 
 export async function main(ns) {
