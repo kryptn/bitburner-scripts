@@ -18,21 +18,44 @@ async function createProgram(ns, program) {
     }
 }
 
+async function pwn(ns, target) {
+    ns.scriptKill("pwn.js", "home");
+    await ns.sleep(1000);
+    ns.run("pwn.js", 1,  target, "redeploy");
+}
+
+async function waitUntilHackingLevel(ns, level) {
+    while(ns.getHackingLevel() < level) {
+        await ns.sleep(30000);
+    }
+}
+
+async function deployWhenReady(ns, target) {
+    const requiredLevel = ns.getServerRequiredhackingLevel(target)
+    await waitUntilHackingLevel(ns, requiredLevel);
+
+    await pwn(ns, target)
+}
+
 export async function main(ns) {
     const hackingLevel =  ns.args[0] != null ? ns.args[0] : 10;
 
     await learnHacking(ns, 10, false);
 
-    ns.run("pwn.js", 1, "joesguns", "redeploy");
+    await pwn(ns, "joesguns");
     ns.run("purchase-controller.js");
 
     await learnHacking(ns, 50, false);
     await createProgram(ns, "BruteSSH.exe");
 
     await learnHacking(ns, 100, false);
-    ns.scriptKill("pwn.js", "home");
-    await ns.sleep(1000);
-    ns.run("pwn.js", 1,  "max-hardware", "redeploy");
+    await pwn(ns, "max-hardware");
+
 
     await createProgram(ns, "FTPCrack.exe");
+
+    await deployWhenReady(ns, "crush-fitness");
+
+    await deployWhenReady(ns, "rho-construction");
+
 }

@@ -145,7 +145,8 @@ async function pwnAllServers(ns, servers, target, redeploy) {
 
 
 function ignores(server) {
-    if (server.name == "darkweb" || server.name == "home" || server.name.startsWith("worker-"))
+    //  server.name == "home"
+    if (server.name == "darkweb" || server.name.startsWith("worker-"))
         return false;
     return true;
 }

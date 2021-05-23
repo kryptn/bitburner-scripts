@@ -2,7 +2,11 @@ var runScript = "old-hack.script";
 
 
 function threadsForServ(serv, script) {
-    return Math.floor(getServerMaxRam(serv) / getScriptRam(script));
+    const maxRam = getServerMaxRam(serv);
+    if(serv == "home") {
+        maxRam = maxRam * 0.8;
+    }
+    return Math.floor(maxRam / getScriptRam(script));
   }
 
 function startScript(serv, script, arg) {
