@@ -29,6 +29,7 @@ const files = [
     "pwn.js",
     "reset.js",
     "scan.js",
+    "scan-analyze.js",
     "single-hack.script",
     "startup.script",
     "test.script",
