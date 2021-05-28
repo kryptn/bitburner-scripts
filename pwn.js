@@ -57,8 +57,8 @@ const hacks = ["BruteSSH.exe", "FTPCrack.exe", "relaySMTP.exe", "HTTPWorm.exe", 
 
 function hackingPower(ns) {
     var acc = 0;
-    for(const hack of hacks) {
-        if(ns.fileExists(hack))
+    for (const hack of hacks) {
+        if (ns.fileExists(hack))
             acc++;
     }
 
@@ -134,7 +134,7 @@ async function pwnAllServers(ns, servers, target, redeploy) {
         }
         await ns.sleep(100);
 
-        if(server.maxRam > 0 && (!server.deployed || !ns.scriptRunning("old-hack.script", server.name))) {
+        if (server.maxRam > 0 && (!server.deployed || !ns.scriptRunning("old-hack.script", server.name))) {
             ns.print(`${server.name} targeting ${target} :: (!server.deployed ${!server.deployed} || !ns.scriptRunning("old-hack.script", server.name)) ${!ns.scriptRunning("old-hack.script", server.name)}`);
             //ns.tprint(`redeploying ${server.name}. redeploy: ${redeploy}, old-hack running: ${ns.scriptRunning("old-hack.script", server.name)}`);
             ns.run("deploy.script", 1, server.name, target);
@@ -153,25 +153,33 @@ function ignores(server) {
 
 async function hackFaction(ns, faction) {
     var serv = "";
-    if(faction == "CSEC")
+    if (faction == "CSEC")
         serv = "CSEC";
-    if(faction == "NiteSec")
+    if (faction == "NiteSec")
         serv = "avmnite-02h";
-    if(faction == "Black Hand")
+    if (faction == "Black Hand")
         serv = "I.I.I.I";
-    if(faction == "BitRunners")
+    if (faction == "BitRunners")
         serv = "run4theh111z";
+    if (faction == "node")
+        serv = "w0r1d_d43m0n";
 
-    if(serv == "")
+    if (serv == "")
         return;
 
     const path = await traverse(ns, "home", serv);
 
-    for(const node of path) {
+    for (const node of path) {
         ns.connect(node);
     }
 
-    await ns.installBackdoor();
+    if (faction == "node") {
+        await ns.sleep(100);
+        await ns.manualHack();
+        ns.tprint("gotta hack this one actually manually for some reason? ")
+        return;
+    } else
+        await ns.installBackdoor();
 
     ns.connect("home");
 }
@@ -194,12 +202,12 @@ export async function main(ns) {
     const servers = allServers.filter(ignores);
 
 
-    if(ns.args[0] == "backdoor") {
+    if (ns.args[0] == "backdoor") {
         await hackFaction(ns, ns.args[1]);
         return;
     }
 
-    if(ns.args[0] == "test") {
+    if (ns.args[0] == "goto") {
 
 
         return;
