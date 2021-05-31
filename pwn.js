@@ -153,15 +153,16 @@ function ignores(server) {
 
 async function hackFaction(ns, faction) {
     var serv = "";
-    if (faction == "CSEC")
+
+    if (faction.toLowerCase() == "csec" || faction == "CyberSec")
         serv = "CSEC";
-    if (faction == "NiteSec")
+    if (faction.toLowerCase() == "nitesec" || faction == "NiteSec")
         serv = "avmnite-02h";
-    if (faction == "Black Hand")
+    if (faction.toLowerCase() == "blackhand" || faction == "The Black Hand")
         serv = "I.I.I.I";
-    if (faction == "BitRunners")
+    if (faction.toLowerCase() == "bitrunners" || faction == "BitRunners")
         serv = "run4theh111z";
-    if (faction == "node")
+    if (faction.toLowerCase() == "bitnode")
         serv = "w0r1d_d43m0n";
 
     if (serv == "")
@@ -173,10 +174,8 @@ async function hackFaction(ns, faction) {
         ns.connect(node);
     }
 
-    if (faction == "node") {
-        await ns.sleep(100);
+    if (faction == "bitnode") {
         await ns.manualHack();
-        ns.tprint("gotta hack this one actually manually for some reason? ")
         return;
     } else
         await ns.installBackdoor();

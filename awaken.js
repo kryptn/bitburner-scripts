@@ -51,19 +51,20 @@ async function deployWhenReady(ns, target) {
 }
 
 export async function main(ns) {
-    const hackingLevel =  ns.args[0] != null ? ns.args[0] : 10;
+    let free = ns.getServerMoneyAvailable("home") < 100000;
 
-    let free = ns.getServerMoneyAvailable("home") > 900000;
+    ns.tprint(`free: ${free}`);
 
-    await learnHacking(ns, 10, true);
+    await learnHacking(ns, 10, free);
 
     await pwn(ns, "joesguns");
     ns.run("purchase-controller.js");
+    ns.run("faction.js");
 
-    await learnHacking(ns, 50, true);
+    await learnHacking(ns, 50, free);
     await createProgram(ns, "BruteSSH.exe");
 
-    await learnHacking(ns, 100, true);
+    await learnHacking(ns, 100, free);
     await pwn(ns, "max-hardware");
 
 
@@ -74,6 +75,6 @@ export async function main(ns) {
     await deployWhenReady(ns, "rho-construction");
 
     await waitUntilHackingLevel(ns, 3000);
-    await hack(ns, "node");
+    await hack(ns, "bitnode");
 
 }
